@@ -1,0 +1,85 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-academic-blue-50 to-academic-blue-100 p-4">
+  <div class="w-full max-w-md">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="flex flex-col items-center justify-center py-8 px-6">
+          <div class="w-20 h-20 bg-academic-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+            <i class="pi pi-graduation-cap text-white text-4xl"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Sistema Académico</h2>
+          <p class="text-gray-600 text-sm">Inicia sesión para continuar</p>
+        </div>
+      </ng-template>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6 p-6">
+        <!-- Correo -->
+        <div class="space-y-2">
+          <label for="correo" class="block text-sm font-medium text-gray-700">
+            <i class="pi pi-envelope mr-2 text-academic-blue-600"></i>
+            Correo Electrónico
+          </label>
+          <input
+            pInputText
+            id="correo"
+            type="email"
+            formControlName="correo"
+            placeholder="example@example.com"
+            class="w-full"
+            [class.ng-invalid]="loginForm.get('correo')?.invalid && loginForm.get('correo')?.touched"
+            [class.ng-dirty]="loginForm.get('correo')?.touched"
+          />
+          @if (getFieldError('correo')) {
+            <small class="text-red-600 text-xs flex items-center mt-1">
+              <i class="pi pi-exclamation-circle mr-1"></i>
+              {{ getFieldError('correo') }}
+            </small>
+          }
+        </div>
+
+        <!-- Contraseña -->
+        <div class="space-y-2">
+          <label for="password" class="block text-sm font-medium text-gray-700">
+            <i class="pi pi-lock mr-2 text-academic-blue-600"></i>
+            Contraseña
+          </label>
+          <p-password
+            id="password"
+            formControlName="password"
+            placeholder="contraseña"
+            [toggleMask]="true"
+            [feedback]="false"
+            styleClass="w-full"
+            [inputStyle]="{ width: '100%' }"
+          />
+          @if (getFieldError('password')) {
+            <small class="text-red-600 text-xs flex items-center mt-1">
+              <i class="pi pi-exclamation-circle mr-1"></i>
+              {{ getFieldError('password') }}
+            </small>
+          }
+        </div>
+
+        <!-- Botón de login -->
+        <div class="pt-4">
+          <p-button
+            type="submit"
+            label="Iniciar Sesión"
+            icon="pi pi-sign-in"
+            [loading]="loading$ | async"
+            styleClass="w-full"
+          />
+        </div>
+      </form>
+
+      <ng-template pTemplate="footer">
+        <div class="bg-academic-blue-50 border-t border-academic-blue-100 px-6 py-4">
+          <p class="text-sm text-academic-blue-700 flex items-center justify-center">
+            <i class="pi pi-info-circle mr-2"></i>
+            Usa tus credenciales institucionales
+          </p>
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+</div>
+

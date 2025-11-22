@@ -1,0 +1,340 @@
+<div class="usuarios-container">
+  <!-- Header -->
+  <div class="header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <i class="pi pi-users"></i>
+        <h1>Gestión de Estudiantes</h1>
+      </div>
+      <div class="header-actions">
+        <p-button
+          label="Nuevo Estudiante"
+          icon="pi pi-plus"
+          (onClick)="openCreateForm()"
+          [disabled]="loading"
+          severity="success"
+        />
+        <p-button
+          icon="pi pi-refresh"
+          (onClick)="refresh()"
+          [disabled]="loading"
+          [text]="true"
+          [rounded]="true"
+          pTooltip="Actualizar"
+        />
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Dialog para Crear/Editar -->
+  <p-dialog
+    [header]="editingUsuario ? 'Editar Estudiante' : 'Nuevo Estudiante'"
+    [(visible)]="showForm"
+    [modal]="true"
+    [style]="{ width: '550px' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()" class="space-y-4">
+      <div class="space-y-2">
+        <label for="cedula" class="block text-sm font-medium text-gray-700">
+          Cédula <span class="text-red-500">*</span>
+        </label>
+        <input
+          pInputText
+          id="cedula"
+          formControlName="cedula"
+          placeholder="Ej: 1234567890"
+          class="w-full"
+          [class.border-red-500]="usuarioForm.get('cedula')?.invalid && usuarioForm.get('cedula')?.touched"
+        />
+        @if (usuarioForm.get('cedula')?.invalid && usuarioForm.get('cedula')?.touched) {
+          <small class="text-red-600 text-xs flex items-center mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>
+            {{ getFieldError('cedula') }}
+          </small>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label for="nombre" class="block text-sm font-medium text-gray-700">
+          Nombre Completo <span class="text-red-500">*</span>
+        </label>
+        <input
+          pInputText
+          id="nombre"
+          formControlName="nombre"
+          placeholder="Ej: Juan Pérez García"
+          class="w-full"
+          [class.border-red-500]="usuarioForm.get('nombre')?.invalid && usuarioForm.get('nombre')?.touched"
+        />
+        @if (usuarioForm.get('nombre')?.invalid && usuarioForm.get('nombre')?.touched) {
+          <small class="text-red-600 text-xs flex items-center mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>
+            {{ getFieldError('nombre') }}
+          </small>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label for="correo" class="block text-sm font-medium text-gray-700">
+          Correo Electrónico <span class="text-red-500">*</span>
+        </label>
+        <input
+          pInputText
+          id="correo"
+          type="email"
+          formControlName="correo"
+          placeholder="estudiante@correo.com"
+          class="w-full"
+          [class.border-red-500]="usuarioForm.get('correo')?.invalid && usuarioForm.get('correo')?.touched"
+        />
+        @if (usuarioForm.get('correo')?.invalid && usuarioForm.get('correo')?.touched) {
+          <small class="text-red-600 text-xs flex items-center mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>
+            {{ getFieldError('correo') }}
+          </small>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label for="telefono" class="block text-sm font-medium text-gray-700">
+          Teléfono <span class="text-red-500">*</span>
+        </label>
+        <input
+          pInputText
+          id="telefono"
+          formControlName="telefono"
+          placeholder="Ej: 3001234567"
+          class="w-full"
+          [class.border-red-500]="usuarioForm.get('telefono')?.invalid && usuarioForm.get('telefono')?.touched"
+        />
+        @if (usuarioForm.get('telefono')?.invalid && usuarioForm.get('telefono')?.touched) {
+          <small class="text-red-600 text-xs flex items-center mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>
+            {{ getFieldError('telefono') }}
+          </small>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label for="rol" class="block text-sm font-medium text-gray-700">
+          Rol <span class="text-red-500">*</span>
+        </label>
+        <p-select
+          id="rol"
+          formControlName="rol"
+          [options]="[{label: 'Estudiante', value: 'estudiante'}, {label: 'Administrador', value: 'admin'}]"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccionar rol"
+          styleClass="w-full"
+        />
+        @if (usuarioForm.get('rol')?.invalid && usuarioForm.get('rol')?.touched) {
+          <small class="text-red-600 text-xs flex items-center mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>
+            {{ getFieldError('rol') }}
+          </small>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label for="password" class="block text-sm font-medium text-gray-700">
+          Contraseña 
+          @if (!editingUsuario) {
+            <span class="text-red-500">*</span>
+          } @else {
+            <span class="text-gray-500 text-xs font-normal">(dejar en blanco para mantener la actual)</span>
+          }
+        </label>
+        <input
+          pInputText
+          id="password"
+          type="password"
+          formControlName="password"
+          [placeholder]="editingUsuario ? 'Dejar vacío para no cambiar' : 'Mínimo 6 caracteres'"
+          class="w-full"
+          [class.border-red-500]="usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched"
+        />
+        @if (usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched) {
+          <small class="text-red-600 text-xs flex items-center mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>
+            {{ getFieldError('password') }}
+          </small>
+        }
+      </div>
+
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          [text]="true"
+          (onClick)="closeForm()"
+          type="button"
+        />
+        <p-button
+          [label]="editingUsuario ? 'Actualizar' : 'Crear'"
+          icon="pi pi-check"
+          [loading]="loading"
+          type="submit"
+        />
+      </div>
+    </form>
+  </p-dialog>
+
+  <!-- Loading State -->
+  @if (loading && usuarios.length === 0) {
+    <div class="table-container">
+      <div class="skeleton-table">
+        @for (item of [1,2,3,4,5]; track item) {
+          <p-skeleton width="100%" height="60px" borderRadius="8px" styleClass="mb-2" />
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @else if (!loading && usuarios.length === 0) {
+    <div class="empty-state">
+      <i class="pi pi-users"></i>
+      <h3>No hay estudiantes registrados</h3>
+      <p>Comienza agregando tu primer estudiante</p>
+      <p-button
+        label="Crear Estudiante"
+        icon="pi pi-plus"
+        (onClick)="openCreateForm()"
+        severity="success"
+      />
+    </div>
+  }
+
+  <!-- Usuarios Table -->
+  @else {
+    <div class="table-container">
+      <p-table
+        [value]="usuarios"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+        [globalFilterFields]="['nombre', 'cedula', 'correo', 'telefono']"
+        styleClass="p-datatable-striped p-datatable-gridlines"
+        [tableStyle]="{ 'min-width': '50rem' }"
+      >
+        <!-- Header -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 60px"></th>
+            <th pSortableColumn="cedula">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-id-card"></i>
+                Cédula <p-sortIcon field="cedula" />
+              </div>
+            </th>
+            <th pSortableColumn="nombre">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-user"></i>
+                Nombre <p-sortIcon field="nombre" />
+              </div>
+            </th>
+            <th pSortableColumn="correo">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-envelope"></i>
+                Correo <p-sortIcon field="correo" />
+              </div>
+            </th>
+            <th pSortableColumn="telefono">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-phone"></i>
+                Teléfono <p-sortIcon field="telefono" />
+              </div>
+            </th>
+            <th pSortableColumn="rol">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-shield"></i>
+                Rol <p-sortIcon field="rol" />
+              </div>
+            </th>
+            <th style="width: 200px">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <!-- Body -->
+        <ng-template pTemplate="body" let-usuario>
+          <tr>
+            <td>
+              <div class="usuario-avatar-table">
+                <span>{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="font-medium">{{ usuario.cedula }}</span>
+            </td>
+            <td>
+              <span class="font-medium">{{ usuario.nombre }}</span>
+            </td>
+            <td>
+              <span>{{ usuario.correo }}</span>
+            </td>
+            <td>
+              <span>{{ usuario.telefono || '-' }}</span>
+            </td>
+            <td>
+              @if (usuario.rol === 'admin') {
+                <p-tag value="Administrador" severity="info" />
+              } @else {
+                <p-tag value="Estudiante" severity="success" />
+              }
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  class="action-btn edit-btn"
+                  (click)="openEditForm(usuario)"
+                  [disabled]="loading || deletingId === usuario.id"
+                  pTooltip="Editar"
+                  tooltipPosition="top"
+                >
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button
+                  type="button"
+                  class="action-btn delete-btn"
+                  (click)="deleteUsuario(usuario.id)"
+                  [disabled]="loading || deletingId === usuario.id"
+                  pTooltip="Eliminar"
+                  tooltipPosition="top"
+                >
+                  @if (deletingId === usuario.id) {
+                    <i class="pi pi-spin pi-spinner"></i>
+                  } @else {
+                    <i class="pi pi-trash"></i>
+                  }
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Empty Message -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">
+              <div class="empty-table-message">
+                <i class="pi pi-users"></i>
+                <p>No hay estudiantes registrados</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+
+  <!-- Confirm Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+</div>

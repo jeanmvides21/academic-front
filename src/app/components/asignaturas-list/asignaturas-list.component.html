@@ -1,0 +1,262 @@
+<div class="asignaturas-container">
+  <!-- Header -->
+  <div class="header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <i class="pi pi-book"></i>
+        <h1>Gestión de Asignaturas</h1>
+      </div>
+      <div class="header-actions">
+        <p-button
+          label="Nueva Asignatura"
+          icon="pi pi-plus"
+          (onClick)="openCreateForm()"
+          [disabled]="loading"
+          severity="success"
+        />
+        <p-button
+          icon="pi pi-refresh"
+          (onClick)="refresh()"
+          [disabled]="loading"
+          [text]="true"
+          [rounded]="true"
+          pTooltip="Actualizar"
+        />
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Dialog para Crear/Editar -->
+  <p-dialog
+    [header]="editingAsignatura ? 'Editar Asignatura' : 'Nueva Asignatura'"
+    [(visible)]="showForm"
+    [modal]="true"
+    [style]="{ width: '550px' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <form [formGroup]="asignaturaForm" (ngSubmit)="saveAsignatura()" class="space-y-4">
+      <div class="space-y-2">
+        <label for="nombre" class="block text-sm font-medium text-gray-700">
+          Nombre de la Asignatura <span class="text-red-500">*</span>
+        </label>
+        <input
+          pInputText
+          id="nombre"
+          formControlName="nombre"
+          placeholder="Ej: Matemáticas Avanzadas"
+          class="w-full"
+          [class.border-red-500]="asignaturaForm.get('nombre')?.invalid && asignaturaForm.get('nombre')?.touched"
+        />
+        @if (asignaturaForm.get('nombre')?.invalid && asignaturaForm.get('nombre')?.touched) {
+          <small class="text-red-600 text-xs flex items-center mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>
+            {{ getFieldError('nombre') }}
+          </small>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label for="descripcion" class="block text-sm font-medium text-gray-700">
+          Descripción
+        </label>
+        <textarea
+          pInputTextarea
+          id="descripcion"
+          formControlName="descripcion"
+          placeholder="Descripción opcional de la asignatura"
+          rows="3"
+          [autoResize]="true"
+          class="w-full"
+        ></textarea>
+      </div>
+
+      <div class="space-y-2">
+        <label for="maxclasessemana" class="block text-sm font-medium text-gray-700">
+          Máximo de Clases por Semana <span class="text-red-500">*</span>
+        </label>
+        <p-inputNumber
+          inputId="maxclasessemana"
+          formControlName="maxclasessemana"
+          [min]="1"
+          [max]="10"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-secondary"
+          incrementButtonClass="p-button-secondary"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+          placeholder="1-10"
+          styleClass="w-full"
+        />
+        @if (asignaturaForm.get('maxclasessemana')?.invalid && asignaturaForm.get('maxclasessemana')?.touched) {
+          <small class="text-red-600 text-xs flex items-center mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>
+            {{ getFieldError('maxclasessemana') }}
+          </small>
+        }
+      </div>
+
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          [text]="true"
+          (onClick)="closeForm()"
+          type="button"
+        />
+        <p-button
+          [label]="editingAsignatura ? 'Actualizar' : 'Crear'"
+          icon="pi pi-check"
+          [loading]="loading"
+          type="submit"
+        />
+      </div>
+    </form>
+  </p-dialog>
+
+  <!-- Loading State -->
+  @if (loading && asignaturas.length === 0) {
+    <div class="table-container">
+      <div class="skeleton-table">
+        @for (item of [1,2,3,4,5]; track item) {
+          <p-skeleton width="100%" height="60px" borderRadius="8px" styleClass="mb-2" />
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @else if (!loading && asignaturas.length === 0) {
+    <div class="empty-state">
+      <i class="pi pi-book"></i>
+      <h3>No hay asignaturas registradas</h3>
+      <p>Comienza agregando tu primera asignatura</p>
+      <p-button
+        label="Crear Asignatura"
+        icon="pi pi-plus"
+        (onClick)="openCreateForm()"
+        severity="success"
+      />
+    </div>
+  }
+
+  <!-- Asignaturas Table -->
+  @else {
+    <div class="table-container">
+      <p-table
+        [value]="asignaturas"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} asignaturas"
+        [globalFilterFields]="['nombre', 'descripcion']"
+        styleClass="p-datatable-striped p-datatable-gridlines"
+        [tableStyle]="{ 'min-width': '50rem' }"
+      >
+        <!-- Header -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 60px"></th>
+            <th pSortableColumn="id">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-hashtag"></i>
+                ID <p-sortIcon field="id" />
+              </div>
+            </th>
+            <th pSortableColumn="nombre">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-book"></i>
+                Nombre <p-sortIcon field="nombre" />
+              </div>
+            </th>
+            <th>Descripción</th>
+            <th pSortableColumn="maxclasessemana">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-calendar-clock"></i>
+                Máx. Clases/Semana <p-sortIcon field="maxclasessemana" />
+              </div>
+            </th>
+            <th style="width: 200px">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <!-- Body -->
+        <ng-template pTemplate="body" let-asignatura>
+          <tr>
+            <td>
+              <div class="asignatura-icon-table">
+                <i class="pi pi-book"></i>
+              </div>
+            </td>
+            <td>
+              <span class="font-medium">{{ asignatura.id }}</span>
+            </td>
+            <td>
+              <span class="font-medium">{{ asignatura.nombre }}</span>
+            </td>
+            <td>
+              <span class="descripcion-text">
+                {{ asignatura.descripcion || '-' }}
+              </span>
+            </td>
+            <td>
+              <p-tag 
+                [value]="asignatura.maxclasessemana + ' clase' + (asignatura.maxclasessemana > 1 ? 's' : '')"
+                severity="info"
+                [rounded]="true"
+              />
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  class="action-btn edit-btn"
+                  (click)="openEditForm(asignatura)"
+                  [disabled]="loading || deletingId === asignatura.id"
+                  pTooltip="Editar"
+                  tooltipPosition="top"
+                >
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button
+                  type="button"
+                  class="action-btn delete-btn"
+                  (click)="deleteAsignatura(asignatura.id)"
+                  [disabled]="loading || deletingId === asignatura.id"
+                  pTooltip="Eliminar"
+                  tooltipPosition="top"
+                >
+                  @if (deletingId === asignatura.id) {
+                    <i class="pi pi-spin pi-spinner"></i>
+                  } @else {
+                    <i class="pi pi-trash"></i>
+                  }
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Empty Message -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">
+              <div class="empty-table-message">
+                <i class="pi pi-book"></i>
+                <p>No hay asignaturas registradas</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+
+  <!-- Confirm Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+</div>

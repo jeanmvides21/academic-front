@@ -1,0 +1,693 @@
+// Variables de diseño (mismas que usuarios-list)
+$primary-color: #2563EB;
+$secondary-color: #1D4ED8;
+$success-color: #10b981;
+$danger-color: #ef4444;
+$warning-color: #f59e0b; // Color naranja para alertas de advertencia
+$background-light: #f8fafc;
+$background-white: #ffffff;
+$border-color: #e2e8f0;
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$border-radius: 12px;
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+.horarios-container {
+  padding: 2rem;
+  background-color: $background-light;
+  min-height: 100vh;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Header
+.header-card {
+  background: $background-white;
+  padding: 1.5rem 2rem;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  margin-bottom: 1rem;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        font-size: 1.75rem;
+        color: $primary-color;
+      }
+
+      h1 {
+        margin: 0;
+        color: $text-primary;
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+  }
+}
+
+// Filter Card
+.filter-card {
+  background: $background-white;
+  padding: 1.5rem 2rem;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+  margin-bottom: 1.5rem;
+
+  .filter-content {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 200px;
+
+      label {
+        font-weight: 600;
+        color: $text-primary;
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      ::ng-deep {
+        .p-select,
+        .p-multiselect {
+          width: 100%;
+        }
+
+        .p-iconfield {
+          width: 100%;
+
+          input {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Error Banner
+.error-banner {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-left: 4px solid $danger-color;
+  padding: 1rem 1.5rem;
+  border-radius: $border-radius;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: $shadow-sm;
+  animation: slideDown 0.3s ease-out;
+
+  i {
+    font-size: 1.5rem;
+    color: $danger-color;
+  }
+
+  span {
+    flex: 1;
+    color: #991b1b;
+    font-weight: 500;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Empty State
+.empty-state {
+  background: $background-white;
+  border-radius: $border-radius;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: $shadow-md;
+  animation: fadeIn 0.5s ease-in;
+
+  i {
+    font-size: 4rem;
+    color: $text-secondary;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: $text-primary;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 1.5rem 0;
+    color: $text-secondary;
+    font-size: 1rem;
+  }
+}
+
+// Table Container
+.table-container {
+  background: $background-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  padding: 1.5rem;
+  animation: fadeIn 0.5s ease-in;
+  overflow: hidden;
+}
+
+// Icono en tabla
+.horario-icon-table {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+
+  i {
+    font-size: 1.1rem;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Action Buttons
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: relative;
+
+  i {
+    font-size: 1rem;
+    color: white;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+    i {
+      transform: scale(1.1);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  // Botón Editar - Círculo Amarillo/Naranja
+  &.edit-btn {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+  }
+
+  // Botón Eliminar - Círculo Rojo
+  &.delete-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+  }
+}
+
+// Empty Table Message
+.empty-table-message {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: $text-secondary;
+
+  i {
+    font-size: 3rem;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+// Skeleton Table
+.skeleton-table {
+  padding: 1.5rem;
+}
+
+// Custom Table Styles
+::ng-deep {
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($secondary-color, 0.1) 100%);
+      color: $text-primary;
+      font-weight: 600;
+      border-bottom: 2px solid $border-color;
+      padding: 1rem;
+
+      .flex {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      i {
+        color: $primary-color;
+        font-size: 1rem;
+      }
+    }
+
+    .p-datatable-tbody > tr {
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba($primary-color, 0.05);
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      > td {
+        padding: 1rem;
+        border-bottom: 1px solid $border-color;
+      }
+    }
+
+    .p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+      background: rgba($primary-color, 0.02);
+    }
+
+    .p-paginator {
+      background: $background-light;
+      border-top: 1px solid $border-color;
+      padding: 1rem;
+      border-radius: 0 0 $border-radius $border-radius;
+    }
+  }
+}
+
+// Legacy card styles removed - using table instead
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// Dialog Form Styles
+::ng-deep {
+  .p-dialog {
+    .p-dialog-header {
+      background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+      color: white;
+      font-weight: 600;
+      border-radius: $border-radius $border-radius 0 0;
+    }
+
+    .p-dialog-content {
+      padding: 2rem;
+    }
+  }
+}
+
+// Form Styles
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: $text-primary;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid $border-color;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+
+    &.error {
+      border-color: $danger-color;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
+      }
+    }
+
+    &::placeholder {
+      color: $text-secondary;
+      opacity: 0.6;
+    }
+  }
+
+  .error-text {
+    display: block;
+    color: $danger-color;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+  }
+
+  // p-select específico
+  ::ng-deep {
+    .p-select {
+      width: 100%;
+
+      &.error {
+        .p-select-label {
+          border-color: $danger-color;
+        }
+      }
+    }
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-left: 4px solid $danger-color;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i {
+    color: $danger-color;
+    font-size: 1.25rem;
+  }
+
+  span {
+    color: #991b1b;
+    font-weight: 500;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $border-color;
+}
+
+// Alerta de Cruce
+.cruce-warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffecb5 100%);
+  border-left: 4px solid $warning-color;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  animation: slideInDown 0.4s ease-out;
+
+  .warning-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+
+    i {
+      font-size: 1.5rem;
+      color: $warning-color;
+    }
+
+    .warning-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #856404;
+    }
+  }
+
+  .warning-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+
+    .warning-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+
+      i {
+        color: $warning-color;
+        font-size: 1.1rem;
+        width: 20px;
+      }
+
+      span {
+        color: #856404;
+
+        strong {
+          font-weight: 700;
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .warning-note {
+    margin: 0.75rem 0 0 0;
+    font-size: 0.9rem;
+    color: #856404;
+    font-style: italic;
+    text-align: center;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .horarios-container {
+    padding: 1rem;
+  }
+
+  .header-card {
+    padding: 1rem 1.5rem;
+
+    .header-content {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .header-title h1 {
+        font-size: 1.5rem;
+      }
+
+      .header-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .table-container {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .filter-card {
+    .filter-content {
+      .filter-group {
+        min-width: 100%;
+      }
+    }
+  }
+
+  ::ng-deep {
+    .p-datatable {
+      .p-datatable-wrapper {
+        overflow-x: auto;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .horarios-container {
+    padding: 0.5rem;
+  }
+
+  .header-card {
+    padding: 1rem;
+
+    .header-content {
+      .header-title {
+        i {
+          font-size: 1.5rem;
+        }
+
+        h1 {
+          font-size: 1.25rem;
+        }
+      }
+
+      .header-actions {
+        flex-wrap: wrap;
+      }
+    }
+  }
+
+  .filter-card {
+    padding: 1rem;
+
+    .filter-content {
+      flex-direction: column;
+      align-items: stretch;
+
+      .filter-group {
+        min-width: 100%;
+      }
+    }
+  }
+
+  .table-container {
+    padding: 0.5rem;
+  }
+
+  ::ng-deep {
+    .p-datatable {
+      font-size: 0.875rem;
+
+      .p-datatable-thead > tr > th {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+
+        i {
+          font-size: 0.875rem;
+        }
+      }
+
+      .p-datatable-tbody > tr > td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  ::ng-deep {
+    .p-dialog {
+      width: 95vw !important;
+      margin: 1rem;
+    }
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    p-button {
+      width: 100%;
+    }
+  }
+}
+
+// Mejoras de accesibilidad
+:focus-visible {
+  outline: 2px solid $primary-color;
+  outline-offset: 2px;
+}
+

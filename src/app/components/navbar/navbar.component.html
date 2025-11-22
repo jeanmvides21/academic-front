@@ -1,0 +1,84 @@
+@if (authService.isLoggedIn() | async) {
+  <nav class="navbar">
+    <div class="navbar-container">
+      <!-- Brand -->
+      <div class="navbar-brand">
+        <div class="brand-text">
+          <h1>Gestión Académica</h1>
+          <span class="brand-subtitle">{{ userRole$ | async }}</span>
+        </div>
+      </div>
+
+      <!-- Desktop Menu -->
+      <ul class="navbar-menu desktop-menu">
+        @for (item of menuItems$ | async; track item.label) {
+          <li>
+            <a 
+              [routerLink]="item.routerLink" 
+              routerLinkActive="active" 
+              [routerLinkActiveOptions]="{exact: false}"
+              class="nav-link"
+            >
+              <i [class]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+
+      <!-- User Info & Logout -->
+      <div class="navbar-actions desktop-menu">
+        <button class="logout-button" (click)="logout()" pTooltip="Cerrar sesión" tooltipPosition="bottom">
+          <i class="pi pi-power-off"></i>
+          <span class="logout-text">Cerrar Sesion</span>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button 
+        class="mobile-menu-button"
+        (click)="toggleMobileMenu()"
+        [class.active]="mobileMenuOpen"
+      >
+        <i [class]="mobileMenuOpen ? 'pi pi-times' : 'pi pi-bars'"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" [class.open]="mobileMenuOpen">
+      <!-- User Info Mobile -->
+      <div class="mobile-user-info">
+        <i class="pi pi-user"></i>
+        <div class="user-details">
+          <span class="user-name">{{ currentUserName$ | async }}</span>
+          <span class="user-role">{{ userRole$ | async }}</span>
+        </div>
+      </div>
+
+      <ul class="mobile-menu-list">
+        @for (item of menuItems$ | async; track item.label) {
+          <li>
+            <a 
+              [routerLink]="item.routerLink" 
+              routerLinkActive="active" 
+              [routerLinkActiveOptions]="{exact: false}"
+              class="mobile-nav-link"
+              (click)="toggleMobileMenu()"
+            >
+              <i [class]="item.icon"></i>
+              <span>{{ item.label }}</span>
+              <i class="pi pi-chevron-right arrow"></i>
+            </a>
+          </li>
+        }
+        <li class="logout-item">
+          <a class="mobile-nav-link logout-link" (click)="logout()">
+            <i class="pi pi-sign-out"></i>
+            <span>Cerrar Sesión</span>
+            <i class="pi pi-chevron-right arrow"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+}
