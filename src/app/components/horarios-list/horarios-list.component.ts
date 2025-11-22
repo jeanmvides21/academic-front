@@ -58,6 +58,7 @@ export class HorariosListComponent implements OnInit {
   horarioForm: FormGroup;
   deletingId: number | null = null;
   horarioConflicto: Horario | null = null;
+  maxClasesExcedido: { asignatura: string; max: number; actual: number } | null = null;
   usuarioSeleccionado: number | null = null;
   asignaturasSeleccionadas: number[] = [];
   asignaturasDisponibles: { label: string; value: number }[] = [];
@@ -87,9 +88,10 @@ export class HorariosListComponent implements OnInit {
       id_asignatura: ['', [Validators.required, Validators.min(1)]]
     });
 
-    // Escuchar cambios en el formulario para validar cruces en tiempo real
+    // Escuchar cambios en el formulario para validar cruces y máximo de clases en tiempo real
     this.horarioForm.valueChanges.subscribe(() => {
       this.verificarCruce();
+      this.verificarMaxClasesSemana();
     });
   }
 
@@ -205,6 +207,7 @@ export class HorariosListComponent implements OnInit {
     this.editingHorario = null;
     this.horarioForm.reset();
     this.horarioConflicto = null;
+    this.maxClasesExcedido = null;
     this.showForm = true;
     this.error = null;
   }
@@ -212,6 +215,7 @@ export class HorariosListComponent implements OnInit {
   openEditForm(horario: Horario): void {
     this.editingHorario = horario;
     this.horarioConflicto = null;
+    this.maxClasesExcedido = null;
     this.horarioForm.patchValue({
       dia: horario.dia,
       hora_inicio: horario.hora_inicio,
@@ -227,6 +231,7 @@ export class HorariosListComponent implements OnInit {
     this.showForm = false;
     this.editingHorario = null;
     this.horarioConflicto = null;
+    this.maxClasesExcedido = null;
     this.horarioForm.reset();
     this.error = null;
   }
@@ -262,6 +267,48 @@ export class HorariosListComponent implements OnInit {
     }
 
     this.horarioConflicto = null;
+  }
+
+  // Verificar máximo de clases por semana
+  verificarMaxClasesSemana(): void {
+    const formValue = this.horarioForm.value;
+    
+    // Solo verificar si tenemos los datos necesarios
+    if (!formValue.id_usuario || !formValue.id_asignatura) {
+      this.maxClasesExcedido = null;
+      return;
+    }
+
+    const idUsuario = parseInt(formValue.id_usuario, 10);
+    const idAsignatura = parseInt(formValue.id_asignatura, 10);
+
+    // Buscar la asignatura para obtener maxclasessemana
+    const asignatura = this.asignaturas.find(a => a.id === idAsignatura);
+    if (!asignatura) {
+      this.maxClasesExcedido = null;
+      return;
+    }
+
+    // Contar horarios existentes de esta asignatura para este usuario
+    const horariosExistentes = this.horarios.filter(h => 
+      h.id_usuario === idUsuario && 
+      h.id_asignatura === idAsignatura &&
+      (!this.editingHorario || h.id !== this.editingHorario.id) // Excluir el que se está editando
+    );
+
+    const totalHorarios = horariosExistentes.length;
+    // Si estamos creando un nuevo horario (no editando), sumar 1
+    const totalConNuevo = this.editingHorario ? totalHorarios : totalHorarios + 1;
+
+    if (totalConNuevo > asignatura.maxclasessemana) {
+      this.maxClasesExcedido = {
+        asignatura: asignatura.nombre,
+        max: asignatura.maxclasessemana,
+        actual: totalHorarios
+      };
+    } else {
+      this.maxClasesExcedido = null;
+    }
   }
 
   // Función para verificar solapamiento de horarios
@@ -319,6 +366,18 @@ export class HorariosListComponent implements OnInit {
         summary: 'Conflicto de horarios',
         detail: `El horario se cruza con ${this.getAsignaturaNombre(this.horarioConflicto.id_asignatura)}`,
         life: 4000
+      });
+      return;
+    }
+
+    // Validar máximo de clases por semana
+    this.verificarMaxClasesSemana();
+    if (this.maxClasesExcedido) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Límite de clases excedido',
+        detail: `La asignatura "${this.maxClasesExcedido.asignatura}" solo permite ${this.maxClasesExcedido.max} clase(s) por semana. Ya tiene ${this.maxClasesExcedido.actual} horario(s) asignado(s).`,
+        life: 5000
       });
       return;
     }
